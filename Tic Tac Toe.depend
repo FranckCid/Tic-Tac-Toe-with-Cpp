@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1460917624 source:/home/franck/Documentos/Git/Tic-Tac-Toe-with-Cpp/Tic Tac Toe/main.cpp
+	<cstdlib>
+	<stdlib.h>
+	<iostream>
+	<stdlib.h>
+	<time.h>
+	<SDL/SDL.h>
+	<SDL/SDL_ttf.h>
+
+1460929755 source:/home/franck/Documentos/Git/Tic-Tac-Toe-with-Cpp/main.cpp
+	<cstdlib>
+	<stdlib.h>
+	<iostream>
+	<stdlib.h>
+	<time.h>
+	<SDL/SDL.h>
+	<SDL/SDL_ttf.h>
+
