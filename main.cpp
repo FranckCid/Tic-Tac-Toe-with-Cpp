@@ -6,14 +6,33 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
+#include <vector>
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 
+//Methods
+//Engine
+void LoadGame();
+void Logic();
+void KeyboardAndMouse();
+void DrawScreen();
+void Quit();
+
+//Utils
+char check_symbols();
+void update();
+void alternate();
+void win(char s);
+void reset();
+
+
 //Game Info
 const char GAME_NAME[35] = "Tic Tac Toe";
-const unsigned int SCREEN_W = 600, SCREEN_H = 600, TILE_SIZE = 200, PADDING = 50;
+const unsigned int SCREEN_W = 700, SCREEN_H = 600, TILE_SIZE = 200, PADDING = 50;
+unsigned int p1_score=0, p2_score=0;
 
 enum{
     EMPTY = '-',
@@ -38,18 +57,71 @@ char tiles[3][3] = {{EMPTY, EMPTY, EMPTY}, {EMPTY, EMPTY, EMPTY}, {EMPTY, EMPTY,
 SDL_Rect p_tiles[3][3];
 SDL_Surface *s_tiles[3][3] = {{NULL,NULL,NULL}, {NULL,NULL,NULL}, {NULL,NULL,NULL}};
 
+//Score
+SDL_Rect p_actualSymbol, p_p1score, p_p2score;
+SDL_Surface *s_actualSymbol=NULL, *s_p1score=NULL, *s_p2score=NULL;
+
 //Game utilities
-char check_symbols();
-void update();
+
+void reset(){
+    for(int i=0; i<3; i++){
+        for(int j=0; j<3; j++){
+            tiles[i][j] = EMPTY;
+        }
+    }
+    update();
+}
+
+void win(char s){
+    std::cout << "The player " << s << " win!" << std::endl;
+    if(s == P1){
+        p1_score++;
+    }else{
+        p2_score++;
+    }
+    reset();
+}
+
+void alternate(){
+    if(actSymbol == P1){
+        actSymbol = P2;
+    }else if(actSymbol == P2){
+        actSymbol = P1;
+    }
+}
 
 char check_symbols(char t, char s){
+
     if(t == EMPTY){
+        alternate();
         return s;
     }
     return t;
 }
 
 void update(){
+
+    char tmpSymb = P1;
+    for(int j=0; j<2; j++){
+        for(int i=0; i<3; i++){
+            if(tiles[i][0] == tmpSymb && tiles[i][1] == tmpSymb && tiles[i][2] == tmpSymb){
+                win(tmpSymb);
+            }
+            if(tiles[0][i] == tmpSymb && tiles[1][i] == tmpSymb && tiles[2][i] == tmpSymb){
+                win(tmpSymb);
+            }
+        }
+
+        if(tiles[1][1] == tmpSymb){
+            if(tiles[0][0] == tmpSymb && tiles[2][2] == tmpSymb){
+                win(tmpSymb);
+            }else if(tiles[2][2] == tmpSymb && tiles[0][0] == tmpSymb){
+                win(tmpSymb);
+            }
+        }
+        tmpSymb = P2;
+    }
+
     for(int i=0; i<3; i++){
         for(int j=0; j<3; j++){
             char c[4] = {tiles[i][j], ' ',' ',' '};
@@ -60,11 +132,6 @@ void update(){
 }
 
 //Game Engine Methods
-void LoadGame();
-void Logic();
-void KeyboardAndMouse();
-void DrawScreen();
-void Quit();
 
 void LoadGame(){
 
@@ -75,12 +142,8 @@ void LoadGame(){
 
     SDL_WM_SetCaption(GAME_NAME, NULL);
     screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 32, SDL_HWSURFACE);
-
 }
 
-void Logic(){
-
-}
 
 void KeyboardAndMouse(){
     if(occur.type == SDL_MOUSEBUTTONDOWN && unlocked){
@@ -116,6 +179,28 @@ void DrawScreen(){
         }
     }
 
+    char c2[5] = {'S', ':', ' ', actSymbol, ' '};
+    s_actualSymbol = TTF_RenderText_Shaded(font, c2, c_white, c_black);
+    p_actualSymbol = {SCREEN_W-90-PADDING, 20+PADDING, 0, 0};
+
+
+    char c3[9] = "P1: ", c4[9];
+    sprintf(c4, "%d", p1_score);
+    strcat(c3, c4);
+    s_p1score = TTF_RenderText_Shaded(font, c3, c_white, c_black);
+    p_p1score = {SCREEN_W-120-PADDING, 100+PADDING, 0, 0};
+
+    char c5[9] = "P2: ", c6[9];
+    sprintf(c6, "%d", p2_score);
+    strcat(c5, c6);
+    s_p2score = TTF_RenderText_Shaded(font, c5, c_white, c_black);
+    p_p2score = {SCREEN_W-120-PADDING, 160+PADDING, 0, 0};
+
+
+    SDL_BlitSurface(s_actualSymbol, NULL, screen, &p_actualSymbol);
+    SDL_BlitSurface(s_p1score, NULL, screen, &p_p1score);
+    SDL_BlitSurface(s_p2score, NULL, screen, &p_p2score);
+
     SDL_Flip(screen);
 
 }
@@ -141,7 +226,6 @@ int main ( int argc, char** argv )
             running = false;
         }
 
-        Logic();
         KeyboardAndMouse();
         DrawScreen();
 

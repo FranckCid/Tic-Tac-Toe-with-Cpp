@@ -30,10 +30,10 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="`sdl-config --cflags` -lsdl -lsdl_ttf" />
+			<Add option="`sdl-config --cflags` -lSDL -lSDL_ttf" />
 		</Compiler>
 		<Linker>
-			<Add option="`sdl-config --cflags` -lsdl -lsdl_ttf" />
+			<Add option="`sdl-config --cflags` -lSDL -lSDL_ttf" />
 		</Linker>
 		<Unit filename="arial.ttf" />
 		<Unit filename="cb.bmp" />
